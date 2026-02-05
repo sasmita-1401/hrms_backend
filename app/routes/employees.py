@@ -6,7 +6,7 @@ from app.schemas import EmployeeCreate, Employee
 router = APIRouter(prefix="/api/employees", tags=["Employees"])
 
 
-@router.post("/add_employee", response_model=Employee)
+@router.post("/add_employee", status_code=201)
 def create_employee(employee: EmployeeCreate):
     # Check for duplicate emp_id or email
     if db.employees.find_one({"emp_id": employee.employeeId}):
@@ -23,8 +23,11 @@ def create_employee(employee: EmployeeCreate):
     }
     result = db.employees.insert_one(data)
     return {
-        "id": str(result.inserted_id),
-        **employee.dict()
+        "message": "Employee added successfully",
+        "employee": {
+            "id": str(result.inserted_id),
+            **employee.dict()
+        }
     }
 
 
@@ -68,7 +71,7 @@ def get_employees_alt():
     return employees
 
 
-@router.delete("/delete_employee/{employeeId}")
+@router.delete("/delete_employee/{employeeId}", status_code=200)
 def delete_employee(employeeId: str):
     from bson import ObjectId
     try:
@@ -78,10 +81,10 @@ def delete_employee(employeeId: str):
     
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Employee not found")
-    return {"message": "Employee deleted successfully"}
+    return {"message": "Employee deleted successfully", "status": "success"}
 
 
-@router.put("/edit_employee/{employeeId}", response_model=Employee)
+@router.put("/edit_employee/{employeeId}", status_code=200)
 def update_employee(employeeId: str, employee: EmployeeCreate):
     from bson import ObjectId
     
@@ -111,6 +114,9 @@ def update_employee(employeeId: str, employee: EmployeeCreate):
         raise HTTPException(status_code=404, detail="Employee not found")
     
     return {
-        "id": employeeId,
-        **employee.dict()
+        "message": "Employee updated successfully",
+        "employee": {
+            "id": employeeId,
+            **employee.dict()
+        }
     }
