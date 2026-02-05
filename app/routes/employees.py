@@ -10,10 +10,10 @@ router = APIRouter(prefix="/api/employees", tags=["Employees"])
 def create_employee(employee: EmployeeCreate):
     # Check for duplicate emp_id or email
     if db.employees.find_one({"emp_id": employee.employeeId}):
-        raise HTTPException(status_code=400, detail="Employee ID already exists")
+        raise HTTPException(status_code=200, detail="Employee ID already exists")
     
     if db.employees.find_one({"email": employee.email}):
-        raise HTTPException(status_code=400, detail="Email already exists")
+        raise HTTPException(status_code=200, detail="Email already exists")
     
     data = {
         "emp_id": employee.employeeId,
