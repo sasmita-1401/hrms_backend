@@ -8,11 +8,14 @@ app = FastAPI(title="HRMS Lite")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://exquisite-kulfi-2cd9fe.netlify.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 app.include_router(employees_router)
 app.include_router(attendance_router)
